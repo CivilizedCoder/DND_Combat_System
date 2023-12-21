@@ -13,14 +13,12 @@ public class Engine {
 
 	public static void main (String [] args) {
 		Engine e = new Engine();
-		
-		
 		e.go();
 	}
 	
 	
 	public void go() {
-		//timing iterations in millions, reducing strain on system and delays of screen write.
+		//timing iterations in millions, reducing strain on system and delays due to excessive screen writing.
 		int tick = 0;
 		int M = 0;
 		while(winner == 1) {
@@ -32,34 +30,45 @@ public class Engine {
 			}
 			story.clear();
 			play();
-			
 		}
-		System.out.println("David slew goliath after attempt number " + tick + "." );
+		System.out.println("David slew goliath after attempt number " + (tick + (1000000*M)) + "." );
 		
 		for (int i = 0; i < story.size(); ++i) {
 			System.out.println(story.get(i));
 		}
-		
 	}
 	
-	
 	public void play() {
-		                        //hp, ac, numDmgD, dmg_D, dmg_Bonus,hit_Bonus, init
-		Creature r = new Creature(0, 0, 0, 0, 0, 0, 0); 
-		Creature goliath = new Creature(r.roll(10, 12, 30), 13, 4, 8, 6, 9, -1); //Triceratops
-		Creature david = new Creature(r.roll(8), 10, 1, 4, 0, 2, 0);             //Commoner
+		Creature r = new Creature               (0,                       10,    1,      1,      1,        1,      1);
+		
+		/*
+		  
+		Commoner:
+		Creature david = new Creature           (r.roll(8),               10,    1,      4,      0,        2,      0); 
+		
+		Black Dragon Wyrmling:             
+		Creature goliath = new Creature         (r.roll(6, 8, 6),         17,    1,     10,      2,        4,      2); 
+		
+		
+		
+		
+		
+		
+		*/
+		               
+		//Initialization                   	     HP,                      AC,   numDie, dmgDie, dmgBonus, toHit, init
+		Creature goliath = new Creature         (r.roll(10, 12, 30),      13,    4,      8,      6,        9,     -1); //Black Dragon Wyrmling
+		Creature david = new Creature           (r.roll(8),               10,    1,      4,      0,        2,      0); //Commoner
+		
+		
+
+		
 		story.add("Our goliath starts with " + goliath.getHP() + " hit points,\n" + "David has but " + david.getHP() + ".");
-		
-		
-		
-		
-		
 		
 		//Initiative and turns
 		int next;
 		goliath.roll(20, goliath.getInitiative());
 		david.roll(20, david.getInitiative());
-		
 		while(goliath.D() == david.D()) {
 			goliath.roll(20, goliath.getInitiative());
 			david.roll(20, david.getInitiative());
@@ -74,12 +83,8 @@ public class Engine {
 			story.add("Goliath wins the initiative roll with " + goliath.D() + " to David's " + david.D() + "\n");
 
 		}
-		
-		
-		
-		
-		
-		
+
+		//looped fights until death of creature
 		int damage;
 		boolean crit = false;
 		while(david.getHP() > 0 && goliath.getHP() > 0) {
@@ -88,7 +93,7 @@ public class Engine {
 				if(david.hit(goliath)) {
 					if(david.D() == 20) {
 						story.add("                                             David crits: " + david.D() + "!");
-
+						crit = true;
 					}
 					else {
 						story.add("David hits: " + david.D());
@@ -122,6 +127,7 @@ public class Engine {
 				if(goliath.hit(david)) {
 					if(goliath.D() == 20) {
 						story.add("Goliath crits: 20!");
+						crit = true;
 					}
 					damage = david.getHP();
 					david.damage(goliath.roll(goliath.getDmgD(), goliath.getDmgBonus()));
@@ -131,6 +137,7 @@ public class Engine {
 					if(crit) {
 						david.damage(damage);
 						story.add("											David takes " + damage*2 + " damage!");
+						crit = false;
 					}
 					else {
 						story.add("											David takes " + damage + " damage.");
@@ -145,6 +152,7 @@ public class Engine {
 			}
 		}
 		if(david.getHP()>0) {
+			//saves information to view
 			endDavidHP = david.getHP();
 			endGoliathHP = goliath.getHP();
 			winner = 0;
