@@ -1,0 +1,154 @@
+
+import java.util.ArrayList;
+
+
+
+public class Engine {
+	private ArrayList<String> story = new ArrayList<String>();
+	private int winner = 1;
+	private int endGoliathHP;
+	private int endDavidHP;
+	private int startDavidHP;
+	private int startGoliathHP;
+
+	public static void main (String [] args) {
+		Engine e = new Engine();
+		
+		
+		e.go();
+	}
+	
+	
+	public void go() {
+		//timing iterations in millions, reducing strain on system and delays of screen write.
+		int tick = 0;
+		int M = 0;
+		while(winner == 1) {
+			++tick;
+			if(tick == 1000000) {
+				M ++;
+				System.out.println(M);
+				tick = 0;
+			}
+			story.clear();
+			play();
+			
+		}
+		System.out.println("David slew goliath after attempt number " + tick + "." );
+		
+		for (int i = 0; i < story.size(); ++i) {
+			System.out.println(story.get(i));
+		}
+		
+	}
+	
+	
+	public void play() {
+		                        //hp, ac, numDmgD, dmg_D, dmg_Bonus,hit_Bonus, init
+		Creature r = new Creature(0, 0, 0, 0, 0, 0, 0); 
+		Creature goliath = new Creature(r.roll(10, 12, 30), 13, 4, 8, 6, 9, -1); //Triceratops
+		Creature david = new Creature(r.roll(8), 10, 1, 4, 0, 2, 0);             //Commoner
+		story.add("Our goliath starts with " + goliath.getHP() + " hit points,\n" + "David has but " + david.getHP() + ".");
+		
+		
+		
+		
+		
+		
+		//Initiative and turns
+		int next;
+		goliath.roll(20, goliath.getInitiative());
+		david.roll(20, david.getInitiative());
+		
+		while(goliath.D() == david.D()) {
+			goliath.roll(20, goliath.getInitiative());
+			david.roll(20, david.getInitiative());
+		}
+		
+		if (david.D() > goliath.D()) {
+			next = 0;
+			story.add("David wins the initiative roll with " + david.D() + " to goliath's " + goliath.D() + "\n");
+		}
+		else {
+			next = 1;
+			story.add("Goliath wins the initiative roll with " + goliath.D() + " to David's " + david.D() + "\n");
+
+		}
+		
+		
+		
+		
+		
+		
+		int damage;
+		boolean crit = false;
+		while(david.getHP() > 0 && goliath.getHP() > 0) {
+			//story.add("");
+			if(next == 0) {
+				if(david.hit(goliath)) {
+					if(david.D() == 20) {
+						story.add("                                             David crits: " + david.D() + "!");
+
+					}
+					else {
+						story.add("David hits: " + david.D());
+
+					}
+					
+					damage = goliath.getHP();
+					goliath.damage(david.roll(david.getDmgD(), david.getDmgBonus()));
+					damage -= goliath.getHP();
+					
+					
+					if(crit) {
+						goliath.damage(damage);
+
+						story.add("deals " + damage*2 + " damage (" + goliath.getHP() + " remains).");
+						crit = false;
+
+					}
+					else {
+						story.add("deals " + damage + " damage (" + goliath.getHP() + " remains).");
+					}
+
+				}
+				else {
+					story.add("David misses: " + david.D());
+				}
+				next = 1;
+			}
+			
+			else {
+				if(goliath.hit(david)) {
+					if(goliath.D() == 20) {
+						story.add("Goliath crits: 20!");
+					}
+					damage = david.getHP();
+					david.damage(goliath.roll(goliath.getDmgD(), goliath.getDmgBonus()));
+					damage -= david.getHP();
+					story.add("                                             David is hit: " + goliath.D());
+					
+					if(crit) {
+						david.damage(damage);
+						story.add("											David takes " + damage*2 + " damage!");
+					}
+					else {
+						story.add("											David takes " + damage + " damage.");
+
+					}
+				}
+				else {
+					story.add("David dodges: " + goliath.D());
+				}
+				next = 0;
+				
+			}
+		}
+		if(david.getHP()>0) {
+			endDavidHP = david.getHP();
+			endGoliathHP = goliath.getHP();
+			winner = 0;
+		}
+		
+	}
+}
