@@ -1,0 +1,81 @@
+
+public class Creature {
+	private int HP;
+	private int AC;
+	private int dmgD;
+	private int numDmgD;
+	private int dmgBonus;
+	private int hitBonus;
+	private int initiative;
+	private int die = 0;
+	
+	Creature(int hp, int ac, int num_D, int dmg_D, int dmg_Bonus, int hit_Bonus, int init){
+		HP = hp;
+		AC = ac;
+		dmgD = dmg_D;
+		dmgBonus = dmg_Bonus;
+		hitBonus = hit_Bonus;
+		initiative = init;
+		numDmgD = num_D;
+		
+		
+	}
+	
+	public int getHP() {
+		return HP;
+	}
+
+	public int getAC() {
+		return AC;
+	}
+	
+	public int getDmgD() {
+		return dmgD;
+	}
+	public int getDmgBonus() {
+		return dmgBonus;
+	}
+	
+	public int getHitBonus() {
+		return hitBonus;
+	}
+	
+	public int getInitiative() {
+		return initiative;
+	}
+	
+	public boolean hit(Creature c) {
+		return roll(20) > c.getAC();
+	}
+	
+	public void damage(int hp) {
+		HP -= hp;
+	}
+	
+	public int roll(int D) {
+		die = (int)(Math.random()*D + 1);
+		return die;
+	}
+	
+	public int roll(int D, int plus) {
+		die = 0;
+		die = (int)(Math.random()*D + 1);
+		die += plus;
+		return die;
+	}
+	
+	public int roll(int rolls, int D, int plus ) {
+		die = 0;
+		
+		for(int i = 0; i < rolls; ++i) {
+			die += (int)(Math.random()*D + 1);
+		}
+		die += plus;
+		return die;
+	}
+	
+	public int D() {
+		return die;
+	}
+	
+}
