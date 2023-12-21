@@ -96,25 +96,18 @@ public class Engine {
 					}
 					else {
 						story.add("David hits: " + david.D());
-
-					}
-					
+						}
 					damage = goliath.getHP();
 					goliath.damage(david.roll(david.getDmgD(), david.getDmgBonus()));
 					damage -= goliath.getHP();
-					
-					
 					if(crit) {
 						goliath.damage(damage);
-
 						story.add("deals " + damage*2 + " damage (" + goliath.getHP() + " remains).");
 						crit = false;
-
 					}
 					else {
 						story.add("deals " + damage + " damage (" + goliath.getHP() + " remains).");
 					}
-
 				}
 				else {
 					story.add("David misses: " + david.D());
@@ -132,7 +125,6 @@ public class Engine {
 					david.damage(goliath.roll(goliath.getDmgD(), goliath.getDmgBonus()));
 					damage -= david.getHP();
 					story.add("                                             David is hit: " + goliath.D());
-					
 					if(crit) {
 						david.damage(damage);
 						story.add("											David takes " + damage*2 + " damage!");
@@ -140,14 +132,12 @@ public class Engine {
 					}
 					else {
 						story.add("											David takes " + damage + " damage.");
-
 					}
 				}
 				else {
 					story.add("David dodges: " + goliath.D());
 				}
 				next = 0;
-				
 			}
 		}
 		if(david.getHP()>0) {
