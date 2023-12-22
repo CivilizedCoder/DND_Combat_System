@@ -8,8 +8,13 @@ public class Creature {
 	private int hitBonus;
 	private int initiative;
 	private int die = 0;
+	private int multiAttacks;
+	private int [] multiNumDie = new int [10];
+	private int [] multiDmgDie = new int [10];
+	private int [] multiDmgBonus = new int [10];
 	
-	Creature(int hp, int ac, int num_D, int dmg_D, int dmg_Bonus, int hit_Bonus, int init){
+	
+	Creature(int hp, int ac, int num_D, int dmg_D, int dmg_Bonus, int hit_Bonus, int init, int multiAtt){
 		HP = hp;
 		AC = ac;
 		dmgD = dmg_D;
@@ -17,16 +22,23 @@ public class Creature {
 		hitBonus = hit_Bonus;
 		initiative = init;
 		numDmgD = num_D;
-		
-		
+		multiAttacks = multiAtt;
 	}
 	
 	public int getHP() {
 		return HP;
 	}
+	
+	public int getMultiAttacks() {
+		return multiAttacks;
+	}
 
 	public int getAC() {
 		return AC;
+	}
+	
+	public int getNumDmgDie() {
+		return numDmgD;
 	}
 	
 	public int getDmgD() {
@@ -72,6 +84,14 @@ public class Creature {
 		}
 		die += plus;
 		return die;
+	}
+	
+	public void addAttack(int num, int die, int plus) {
+		
+		multiNumDie[multiAttacks - 1] = num;
+		multiDmgDie[multiAttacks - 1] = die;
+		multiDmgBonus[multiAttacks - 1] = plus;
+		
 	}
 	
 	public int D() {
