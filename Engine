@@ -30,7 +30,7 @@ public class Engine {
 	}
 	
 	public void play() {
-		Creature r = new Creature               (0,                       10,    1,      1,      1,        1,      1);
+		Creature r = new Creature               (0,                       10,    1,      1,      1,        1,      1,      0);
 		/*
 		Commoner:
 		Creature david = new Creature           (r.roll(8),               10,    1,      4,      0,        2,      0); 
@@ -44,10 +44,9 @@ public class Engine {
 		
 
 		*/           
-		//Initialization                   	     HP,                      AC,   numDie, dmgDie, dmgBonus, toHit, init
-		//Creature goliath = new Creature         (r.roll(7, 10, 21),       13,    1,     10,      5,        7,      1); //Owlbear
-		Creature goliath = new Creature         (r.roll(6, 8, 6),         17,    1,     10,      2,        4,      2);
-		Creature david = new Creature           (r.roll(8),               10,    1,      4,      0,        2,      0); //Commoner
+		//Initialization                   	     HP,                      AC,   numDie, dmgDie, dmgBonus, toHit, init,  multiAttacks
+		Creature goliath = new Creature         (r.roll(6, 8, 6),         17,    1,     10,      2,        4,      2,      1);
+		Creature david = new Creature           (r.roll(8),               10,    1,      4,      0,        2,      0,      0); //Commoner
 		//NOTE: only one attack is automatically implemented. For multiattack, see line 127-140. 
 		story.add("Our Goliath starts with " + goliath.getHP() + " hit points,\n" + "David has but " + david.getHP() + ".");
 		
@@ -79,73 +78,75 @@ public class Engine {
 
 			if(next == 0) {
 				if(david.hit(goliath)) {
-					if(david.D() == 20) {
-						story.add("David crits: " + david.D() + "!");
-						crit = true;
-					}
-					else {
-						story.add("David hits: " + david.D());
-						}
+					
 					damage = goliath.getHP();
-					goliath.damage(david.roll(david.getDmgD(), david.getDmgBonus()));
+					goliath.damage(r.roll(david.getNumDmgDie(), david.getDmgD(), david.getDmgBonus())); //insert alternative attack here
 					damage -= goliath.getHP();
-					if(crit) {
-						goliath.damage(damage);
-						story.add("deals " + damage*2 + " damage (" + goliath.getHP() + " remains).");
-						crit = false;
+					
+					if(david.D() != 20) {
+						story.add("David rolls: " + david.D() + ", and hits for " + damage + " damage.");	
 					}
 					else {
-						story.add("deals " + damage + " damage (" + goliath.getHP() + " remains).");
+						goliath.damage(damage);
+						story.add("David rolls: " + david.D() + "! Dealing " + damage*2 + " damage.");
 					}
 				}
 				else {
-					story.add("David misses: " + david.D());
+					story.add("David rolls: " + david.D() + ", missing goliath.");
 				}
 				next = 1;
 			}
 			else {
 				if(goliath.hit(david)) {
-					if(goliath.D() == 20) {
-						story.add("Goliath crits: 20!");
-						crit = true;
-					}
-					story.add("Goliath hits: " + goliath.D());
-					damage = david.getHP();
-					david.damage(goliath.roll(goliath.getDmgD(), goliath.getDmgBonus()));
-					damage -= david.getHP();
-					if(crit) {
-						david.damage(damage);
-						story.add("dealing " + damage*2 + " damage!");
-						crit = false;
-					}
-					else {
-						story.add("dealing " + damage + " damage.");
-					}
-				}
-				else {
-					story.add("David dodges: " + goliath.D());
-				}
-				//Multiattack will be implemented here. Entire block can be reproduced as necessary
-				/*     
-				if(goliath.hit(david)) {
+					
 					damage = david.getHP();
 					david.damage(r.roll(2, 8, 5)); //insert alternative attack here
 					damage -= david.getHP();
+					
 					if(goliath.D() != 20) {
-						story.add("David is hit (multiattack): " + goliath.D() + ", and takes " + damage + " damage.");	
+						story.add("Goliath rolls: " + goliath.D() + ", and hits for " + damage + " damage.");	
 					}
 					else {
 						david.damage(damage);
-						story.add("David takes a crit (multiattack): " + goliath.D() + ", and takes " + damage*2 + "damage.");
+						story.add("Goliath rolls: " + goliath.D() + "! Dealing " + damage*2 + " damage.");
 					}
 				}
-				    */
+				else {
+					story.add("Goliath rolls: " + goliath.D() + ", missing david.");
+				}
+				//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+				for (int i = 0; i < goliath.getMultiAttacks(); ++i) {
+					multiAttack(r, goliath, david, i+1);
+				}
+				
 				next = 0;
 			}
 		}
 		if(david.getHP()>0) {
 			//End simulation upon a david victor
 			winner = 0;
+		}
+	}
+	
+	public void multiAttack(Creature r, Creature goliath, Creature david, int i) {
+		int damage = 0;
+		
+		if(goliath.hit(david)) {
+			
+			damage = david.getHP();
+			david.damage(r.roll(2, 8, 5)); //insert alternative attack here
+			damage -= david.getHP();
+			
+			if(goliath.D() != 20) {
+				story.add("Goliath rolls: " + goliath.D() + ", and hits for " + damage + " damage. (multi-attack " + i + ").");	
+			}
+			else {
+				david.damage(damage);
+				story.add("Goliath rolls: " + goliath.D() + "! Dealing " + damage*2 + "damage. (multi-attack " + i + ").");
+			}
+		}
+		else {
+			story.add("Goliath rolls: " + goliath.D() + ", missing david (multi-attack " + i + ").");
 		}
 	}
 }
