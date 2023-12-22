@@ -30,7 +30,7 @@ public class Engine {
 	}
 	
 	public void play() {
-		Creature r = new Creature               (0,                       10,    1,      1,      1,        1,      1,      0);
+		Creature DM = new Creature               (0,                       10,    1,      1,      1,        1,      1,      0);
 		/*
 		Commoner:
 		Creature david = new Creature           (r.roll(8),               10,    1,      4,      0,        2,      0); 
@@ -45,8 +45,8 @@ public class Engine {
 
 		*/           
 		//Initialization                   	     HP,                      AC,   numDie, dmgDie, dmgBonus, toHit, init,  multiAttacks
-		Creature goliath = new Creature         (r.roll(6, 8, 6),         17,    1,     10,      2,        4,      2,      1);
-		Creature david = new Creature           (r.roll(8),               10,    1,      4,      0,        2,      0,      0); //Commoner
+		Creature goliath = new Creature         (DM.roll(6, 8, 6),         17,    1,     10,      2,        4,      2,      1);
+		Creature david = new Creature           (DM.roll(8),               10,    1,      4,      0,        2,      0,      0); //Commoner
 		//NOTE: only one attack is automatically implemented. For multiattack, see line 127-140. 
 		story.add("Our Goliath starts with " + goliath.getHP() + " hit points,\n" + "David has but " + david.getHP() + ".");
 		
@@ -66,6 +66,7 @@ public class Engine {
 		else {
 			next = 1;
 			story.add("Goliath wins the initiative roll with " + goliath.D() + " to David's " + david.D() + "\n");
+			story.add("David HP: " + david.getHP() + "     Goliath HP: " + goliath.getHP());
 
 		}
 
@@ -73,14 +74,13 @@ public class Engine {
 		int damage;
 		boolean crit = false;
 		while(david.getHP() > 0 && goliath.getHP() > 0) {
-			story.add("");
-			story.add("David HP: " + david.getHP() + "     Goliath HP: " + goliath.getHP());
-
 			if(next == 0) {
+				story.add("");
+				story.add("David HP: " + david.getHP() + "     Goliath HP: " + goliath.getHP());
 				if(david.hit(goliath)) {
 					
 					damage = goliath.getHP();
-					goliath.damage(r.roll(david.getNumDmgDie(), david.getDmgD(), david.getDmgBonus())); //insert alternative attack here
+					goliath.damage(DM.roll(david.getNumDmgDie(), david.getDmgD(), david.getDmgBonus()));
 					damage -= goliath.getHP();
 					
 					if(david.D() != 20) {
@@ -100,7 +100,7 @@ public class Engine {
 				if(goliath.hit(david)) {
 					
 					damage = david.getHP();
-					david.damage(r.roll(2, 8, 5)); //insert alternative attack here
+					david.damage(DM.roll(goliath.getNumDmgDie(), goliath.getDmgD(), goliath.getDmgBonus()));
 					damage -= david.getHP();
 					
 					if(goliath.D() != 20) {
@@ -116,7 +116,7 @@ public class Engine {
 				}
 				//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				for (int i = 0; i < goliath.getMultiAttacks(); ++i) {
-					multiAttack(r, goliath, david, i+1);
+					multiAttack(DM, goliath, david, i+1);
 				}
 				
 				next = 0;
