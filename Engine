@@ -1,7 +1,10 @@
 import java.util.ArrayList;
+import java.util.Scanner;
 public class Engine {
 	private ArrayList<String> story = new ArrayList<String>();
 	private int winner = 1;
+	private int[] goliathStats;
+	private int[] davidStats;
 
 	public static void main (String [] args) {
 		Engine e = new Engine();
@@ -9,6 +12,30 @@ public class Engine {
 	}
 	
 	public void go() {
+		
+		
+		goliathStats = new int [10];
+		Scanner scan = new Scanner(System.in);
+		System.out.println("Please Enter your Goliath in the following format:\n"
+				+ "1 8 4     12          1   12   4            2      4        0\n"
+				+ "  HP      AC    numDie typeDie dmgBonus   toHit   init    multiattacks");
+		for(int i = 0; i < 10; ++i) {
+			goliathStats[i] = scan.nextInt();
+		}
+		
+		davidStats = new int [10];
+		System.out.println("Please Enter your david in the following format:\n"
+				+ "1 4 0     10          1    4    0            2      0        0\n"
+				+ "  HP      AC    numDie typeDie dmgBonus   toHit   init    multiattacks");
+		for(int i = 0; i < 10; ++i) {
+			davidStats[i] = scan.nextInt();
+		}
+		
+		
+		
+		
+		
+		
 		//timing iterations in millions, reducing strain on system and delays due to excessive screen writing.
 		int tick = 0;
 		int M = 0;
@@ -40,13 +67,17 @@ public class Engine {
 		
 		Owlbear:
 		Creature goliath = new Creature         (r.roll(7, 10, 21),       13,    1,     10,      5,        7,      1);
-		david.damage(r.roll(2, 8, 5)); (multiattack)
+		
 		
 
-		*/           
+		david.damage(r.roll(2, 8, 5)); (multiattack)
+
+
+		*/         
+		
 		//Initialization                   	     HP,                      AC,   numDie, dmgDie, dmgBonus, toHit, init,  multiAttacks
-		Creature goliath = new Creature         (DM.roll(6, 8, 6),         17,    1,     10,      2,        4,      2,      1);
-		Creature david = new Creature           (DM.roll(8),               10,    1,      4,      0,        2,      0,      0); //Commoner
+		Creature goliath = new Creature         (DM.roll(goliathStats[0], goliathStats[1], goliathStats[2]),goliathStats[3],goliathStats[4],goliathStats[5],goliathStats[6],goliathStats[7],goliathStats[8],goliathStats[9]);
+		Creature david = new Creature           (DM.roll(davidStats[0], davidStats[1], davidStats[2]),davidStats[3],davidStats[4],davidStats[5],davidStats[6],davidStats[7],davidStats[8],davidStats[9]); //Commoner
 		//NOTE: only one attack is automatically implemented. For multiattack, see line 127-140. 
 		story.add("Our Goliath starts with " + goliath.getHP() + " hit points,\n" + "David has but " + david.getHP() + ".");
 		
